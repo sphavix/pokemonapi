@@ -1,0 +1,38 @@
+﻿@page "/"
+@using Models
+@using Util
+@inject PokeHttpClient client
+
+<div class="container">
+    <img src="img/pokemon-logo.png"  alt="app title" class="app-title"/>
+    <div class="pokemon-row">
+        @foreach(var pokemon in pokemonList)
+        {
+            <a href="/pokemon/@pokemon.id">
+                <div class="pokemon-card">
+                    <img src="@pokemon.sprites.front_default" alt="Pokemon Sprite" />
+                    <h4 class="pokemon-name">@pokemon.name</h4>
+                    <div class="type-row">
+                        @foreach(var ty in pokemon.types)
+                        {
+                            <span class="type-badge" style="background-color: @PokeColor.GetTypeColor(@ty.type.name)">@ty.type.name</span>
+                        }
+                </div>                
+            </div>
+            </a> 
+        }
+    </div>
+</div>
+
+@code {
+    List<Pokemon> pokemonList = new List<Pokemon>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        for(int i = 1; i < 200; i++)
+        {
+            pokemonList.Add(await client.GetPokemon(i.ToString()));
+            StateHasChanged();
+        }
+    }
+}
